@@ -91,7 +91,8 @@ jobs:
       - name: Compilar xnuloader (BOOTAA64.EFI)
         working-directory: scion-kernel
         run: |
-         sudo apt-get update && sudo apt-get install -y lld
+         brew install lld
+         export PATH="$(brew --prefix lld)/bin:$PATH"
          MKID=$(find . -maxdepth 3 -name "mkidentity.sh" | head -n 1)
          bash "$MKID" --placeholder
          make loader

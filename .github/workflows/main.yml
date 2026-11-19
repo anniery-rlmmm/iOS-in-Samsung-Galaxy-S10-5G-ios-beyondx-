@@ -24,7 +24,7 @@ jobs:
         run: ls -la
 
   build-uefi:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Instalar dependencias de EDK2 / Mu-Silicium
         run: |

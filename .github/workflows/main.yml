@@ -36,6 +36,12 @@ jobs:
         working-directory: uefi-src
         run: find Platforms/Samsung/beyondxPkg -maxdepth 3
 
+      - name: Usar DTB de beyond1lte para beyondx
+        working-directory: uefi-src
+        run: |
+          ls -la Resources/DTBs/
+          cp -f Resources/DTBs/beyond1lte.dtb Resources/DTBs/beyondx.dtb
+          
       - name: Compilar imagen UEFI (beyondx)
         working-directory: uefi-src
         run: python3 build_uefi.py -d beyondx

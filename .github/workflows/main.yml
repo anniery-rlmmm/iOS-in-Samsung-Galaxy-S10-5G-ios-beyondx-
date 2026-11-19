@@ -46,17 +46,19 @@ jobs:
           ./setup_env.sh || true
           pip3 install --break-system-packages -r pip-requirements.txt
 
-      - name: Compilar imagen UEFI
+      - name: Inspeccionar archivos de beyond1ltePkg
         working-directory: uefi-src
-        run: |
-          # Prueba primero con beyondx; si no existe, cambia a beyond1lte o starlte
-          python3 build_uefi.py -d beyondx
+        run: find Platforms/Samsung/beyond1ltePkg -maxdepth 3
+
+      - name: Compilar imagen UEFI base (beyond1lte)
+        working-directory: uefi-src
+        run: python3 build_uefi.py -d beyond1lte
 
       - name: Subir imagen UEFI compilada
         uses: actions/upload-artifact@v4
         with:
-          name: uefi-beyondx
+          name: uefi-beyond1lte
           path: |
             uefi-src/Build/**/*.img
-            uefi-src/Mu-beyondx.img
+            uefi-src/Mu-*.img
           if-no-files-found: warn

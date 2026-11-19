@@ -30,11 +30,33 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential uuid-dev iasl git nasm \
-            python3 python3-pip python3-venv gcc-aarch64-linux-gnu clang lld
+            python3 python3-pip python3-venv gcc-aarch64-linux-gnu clang lld mono-devel
 
       - name: Clonar repositorio UEFI
         run: git clone --recursive "${{ github.event.inputs.uefi_repo }}" uefi-src
 
-      - name: Inspeccionar estructura y scripts de build
+      - name: Ver dispositivos Samsung disponibles
         working-directory: uefi-src
-        run: ls -la
+        run: ls -la Platforms/Samsung || ls -la Platforms
+
+      - name: Configurar entorno de Mu-Silicium
+        working-directory: uefi-src
+        run: |
+          chmod +x setup_env.sh
+          ./setup_env.sh || true
+          pip3 install --break-system-packages -r pip-requirements.txt
+
+      - name: Compilar imagen UEFI
+        working-directory: uefi-src
+        run: |
+          # Prueba primero con beyondx; si no existe, cambia a beyond1lte o starlte
+          python3 build_uefi.py -d beyondx
+
+      - name: Subir imagen UEFI compilada
+        uses: actions/upload-artifact@v4
+        with:
+          name: uefi-beyondx
+          path: |
+            uefi-src/Build/**/*.img
+            uefi-src/Mu-beyondx.img
+          if-no-files-found: warn

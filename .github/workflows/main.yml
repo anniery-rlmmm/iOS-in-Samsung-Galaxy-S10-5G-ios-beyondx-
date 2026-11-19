@@ -1,0 +1,40 @@
+name: Build HakiOS/Scion (Kernel + UEFI)
+
+on:
+  workflow_dispatch:
+    inputs:
+      kernel_repo:
+        description: 'URL HTTPS del repo del kernel'
+        required: true
+        default: 'https://github.com/Scion-Project/scion-kernel.git'
+      uefi_repo:
+        description: 'URL HTTPS del repo UEFI (ej. Mu-Silicium)'
+        required: true
+        default: 'https://github.com/Project-Silicium/Mu-Silicium.git'
+
+jobs:
+  build-xnu-kernel:
+    runs-on: macos-15
+    steps:
+      - name: Clonar repositorio del kernel
+        run: git clone --recursive "${{ github.event.inputs.kernel_repo }}" scion-kernel
+
+      - name: Inspeccionar estructura del kernel
+        working-directory: scion-kernel
+        run: ls -la
+
+  build-uefi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Instalar dependencias de EDK2 / Mu-Silicium
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential uuid-dev iasl git nasm \
+            python3 python3-pip python3-venv gcc-aarch64-linux-gnu clang lld
+
+      - name: Clonar repositorio UEFI
+        run: git clone --recursive "${{ github.event.inputs.uefi_repo }}" uefi-src
+
+      - name: Inspeccionar estructura y scripts de build
+        working-directory: uefi-src
+        run: ls -la

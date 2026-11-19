@@ -76,6 +76,12 @@ jobs:
           echo "=== AYUDA DE defconfig Y kernel ==="
           grep -A 15 "^defconfig:" Makefile || true
           grep -A 15 "^kernel:" Makefile || true
+
+      - name: Compilar xnuloader (BOOTAA64.EFI)
+        working-directory: scion-kernel
+        run: |
+         make loader
+         find . -iname "*.efi"
           
       - name: Configurar y compilar kernel (Exynos 9820)
         working-directory: scion-kernel
@@ -92,6 +98,13 @@ jobs:
         working-directory: scion-kernel
         run: find . -maxdepth 6 \( -name "kernel*" -o -name "*.img" -o -name "*.macho" \) -type f
 
+      - name: Subir xnuloader EFI
+        uses: actions/upload-artifact@v4
+        with:
+          name: xnuloader-efi
+          path: |
+            **/*.efi
+            
       - name: Subir binarios del kernel
         uses: actions/upload-artifact@v4
         with:

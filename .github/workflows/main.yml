@@ -50,7 +50,7 @@ jobs:
             scion-kernel/*.img
           if-no-files-found: warn
 
-build-uefi:
+ build-uefi:
     runs-on: ubuntu-24.04
     steps:
       - name: Instalar dependencias de EDK2 / Mu-Silicium

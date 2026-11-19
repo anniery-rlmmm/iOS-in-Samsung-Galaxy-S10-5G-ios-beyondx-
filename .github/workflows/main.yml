@@ -33,6 +33,11 @@ jobs:
               xnu-src/xnu-8796.121.2
           fi
 
+      - name: Instalar herramientas GNU (coreutils) para macOS
+        run: |
+          brew install coreutils
+          echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
+    
       - name: Compilar kernel con xnu-build.sh
         working-directory: scion-kernel
         run: |

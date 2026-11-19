@@ -14,7 +14,7 @@ on:
 
 jobs:
   build-xnu-kernel:
-    runs-on: macos-15
+    runs-on: macos-15-intel
     steps:
       - name: Clonar repositorio del kernel
         run: git clone --recursive "${{ github.event.inputs.kernel_repo }}" scion-kernel

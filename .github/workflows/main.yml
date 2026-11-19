@@ -37,16 +37,21 @@ jobs:
         run: |
           brew install coreutils
           echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
-    
-      - name: Compilar kernel con xnu-build.sh
+
+      - name: Ver targets del Makefile y preparar árbol parchado
         working-directory: scion-kernel
         run: |
-          chmod +x xnu-build.sh
-          source ./xnu-env.sh || true
           export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-          which sha256sum
-          bash -x ./xnu-build.sh
+          echo "=== TARGETS DEL MAKEFILE ==="
+          grep -E '^[a-zA-Z0-9_.-]+:' Makefile || true
+          make setup || make prepare || make help || true
 
+      - name: Compilar kernel con Makefile
+        working-directory: scion-kernel
+        run: |
+          export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+          make
+          
       - name: Subir binarios del kernel
         uses: actions/upload-artifact@v4
         with:

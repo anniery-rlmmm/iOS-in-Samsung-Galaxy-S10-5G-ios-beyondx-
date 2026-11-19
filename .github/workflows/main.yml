@@ -13,17 +13,42 @@ on:
         default: 'https://github.com/Project-Silicium/Mu-Silicium.git'
 
 jobs:
-  build-xnu-kernel:
-    runs-on: macos-latest
+ build-xnu-kernel:
+    runs-on: macos-15
     steps:
       - name: Clonar repositorio del kernel
         run: git clone --recursive "${{ github.event.inputs.kernel_repo }}" scion-kernel
 
-      - name: Inspeccionar estructura del kernel
+      - name: Ver dispositivos, SoCs y opciones de build
         working-directory: scion-kernel
-        run: ls -la
+        run: |
+          echo "=== DEVICES ==="
+          ls -la devices
+          echo "=== SOCS ==="
+          ls -la socs
+          echo "=== PROFILES ==="
+          ls -la profiles
+          echo "=== USO DE xnu-build.sh ==="
+          head -n 50 xnu-build.sh
 
-  build-uefi:
+      - name: Compilar kernel con xnu-build.sh
+        working-directory: scion-kernel
+        run: |
+          chmod +x xnu-build.sh
+          source ./xnu-env.sh || true
+          ./xnu-build.sh
+
+      - name: Subir binarios del kernel
+        uses: actions/upload-artifact@v4
+        with:
+          name: scion-kernel-build
+          path: |
+            scion-kernel/BUILD/**/*kernel*
+            scion-kernel/out/**/*
+            scion-kernel/*.img
+          if-no-files-found: warn
+
+    build-uefi:
     runs-on: ubuntu-24.04
     steps:
       - name: Instalar dependencias de EDK2 / Mu-Silicium

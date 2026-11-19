@@ -76,12 +76,6 @@ jobs:
           echo "=== AYUDA DE defconfig Y kernel ==="
           grep -A 15 "^defconfig:" Makefile || true
           grep -A 15 "^kernel:" Makefile || true
-
-      - name: Compilar xnuloader (BOOTAA64.EFI)
-        working-directory: scion-kernel
-        run: |
-         make loader
-         find . -iname "*.efi"
           
       - name: Configurar y compilar kernel (Exynos 9820)
         working-directory: scion-kernel
@@ -94,6 +88,14 @@ jobs:
           rm -rf xnu-src
           make kernel
 
+      - name: Compilar xnuloader (BOOTAA64.EFI)
+        working-directory: scion-kernel
+        run: |
+         MKID=$(find . -maxdepth 3 -name "mkidentity.sh" | head -n 1)
+         bash "$MKID" --placeholder
+         make loader
+         find . -iname "*.efi"
+      
       - name: Buscar binarios generados
         working-directory: scion-kernel
         run: find . -maxdepth 6 \( -name "kernel*" -o -name "*.img" -o -name "*.macho" \) -type f

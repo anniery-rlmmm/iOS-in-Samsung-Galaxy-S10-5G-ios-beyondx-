@@ -16,23 +16,6 @@ jobs:
  build-xnu-kernel:
     runs-on: macos-15-intel
     steps:
-      - name: Clonar repositorio del kernel
-        run: git clone --recursive "${{ github.event.inputs.kernel_repo }}" scion-kernel
-
-      - name: Preparar dependencias y código base de XNU
-        working-directory: scion-kernel
-        run: |
-          if [ -f xnu-deps/setup.sh ]; then
-            chmod +x xnu-deps/setup.sh
-            ./xnu-deps/setup.sh
-          fi
-          if [ ! -d xnu-src/xnu-8796.121.2 ]; then
-            mkdir -p xnu-src
-            git clone --depth 1 --branch xnu-8796.121.2 \
-              https://github.com/apple-oss-distributions/xnu.git \
-              xnu-src/xnu-8796.121.2
-          fi
-
       - name: Instalar coreutils (solo sha256sum GNU)
         run: |
           brew install coreutils
@@ -40,14 +23,19 @@ jobs:
           ln -sf "$(brew --prefix coreutils)/bin/gsha256sum" "$HOME/gnu-shims/sha256sum"
           echo "$HOME/gnu-shims" >> $GITHUB_PATH
 
+      - name: Clonar repositorio del kernel
+        run: git clone --recursive "${{ github.event.inputs.kernel_repo }}" scion-kernel
+
       - name: Compilar kernel
         working-directory: scion-kernel
         run: |
+          rm -rf xnu-src
           make kernel || {
             echo "=== ULTIMAS LINEAS DE exporthdrs.log ==="
             tail -n 60 xnu-deps/exporthdrs.log || true
             exit 1
           }
+
       - name: Buscar binarios generados
         working-directory: scion-kernel
         run: find . -maxdepth 6 \( -name "kernel*" -o -name "*.img" -o -name "*.macho" \) -type f

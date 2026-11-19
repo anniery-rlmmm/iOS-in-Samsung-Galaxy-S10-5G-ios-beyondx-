@@ -71,15 +71,16 @@ jobs:
           grep -A 15 "^defconfig:" Makefile || true
           grep -A 15 "^kernel:" Makefile || true
           
-      - name: Compilar kernel
+      - name: Configurar y compilar kernel (Exynos 9820)
         working-directory: scion-kernel
         run: |
+          echo "=== CONFIGS DE EXYNOS 9820 ==="
+          ls -la socs/exynos9820/configs
+          cat socs/exynos9820/soc.conf
+          make exynos9820_defconfig || make defconfig FRAGMENTS=socs/exynos9820/configs/*
+          make config
           rm -rf xnu-src
-          make kernel || {
-            echo "=== ULTIMAS LINEAS DE exporthdrs.log ==="
-            tail -n 60 xnu-deps/exporthdrs.log || true
-            exit 1
-          }
+          make kernel
 
       - name: Buscar binarios generados
         working-directory: scion-kernel

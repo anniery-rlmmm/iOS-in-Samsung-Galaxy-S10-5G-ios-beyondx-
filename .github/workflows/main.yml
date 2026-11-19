@@ -50,7 +50,7 @@ jobs:
           if-no-files-found: warn
 
   build-xnu-kernel:
-    runs-on: macos-15
+    runs-on: macos-15-intel
     steps:
       - name: Instalar coreutils (solo sha256sum GNU)
         run: |

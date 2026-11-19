@@ -33,17 +33,21 @@ jobs:
               xnu-src/xnu-8796.121.2
           fi
 
-      - name: Instalar herramientas GNU (coreutils) para macOS
+      - name: Instalar coreutils (solo sha256sum GNU)
         run: |
           brew install coreutils
-          echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
+          mkdir -p "$HOME/gnu-shims"
+          ln -sf "$(brew --prefix coreutils)/bin/gsha256sum" "$HOME/gnu-shims/sha256sum"
+          echo "$HOME/gnu-shims" >> $GITHUB_PATH
 
       - name: Compilar kernel
         working-directory: scion-kernel
         run: |
-          export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-          make kernel
-
+          make kernel || {
+            echo "=== ULTIMAS LINEAS DE exporthdrs.log ==="
+            tail -n 60 xnu-deps/exporthdrs.log || true
+            exit 1
+          }
       - name: Buscar binarios generados
         working-directory: scion-kernel
         run: find . -maxdepth 6 \( -name "kernel*" -o -name "*.img" -o -name "*.macho" \) -type f

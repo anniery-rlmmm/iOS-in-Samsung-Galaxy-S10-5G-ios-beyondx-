@@ -43,7 +43,9 @@ jobs:
         run: |
           chmod +x xnu-build.sh
           source ./xnu-env.sh || true
-          ./xnu-build.sh
+          export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+          which sha256sum
+          bash -x ./xnu-build.sh
 
       - name: Subir binarios del kernel
         uses: actions/upload-artifact@v4

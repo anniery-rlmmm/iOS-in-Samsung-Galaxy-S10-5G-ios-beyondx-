@@ -62,6 +62,15 @@ jobs:
       - name: Clonar repositorio del kernel
         run: git clone --recursive "${{ github.event.inputs.kernel_repo }}" scion-kernel
 
+      - name: Inspeccionar configuración de Exynos 9820
+        working-directory: scion-kernel
+        run: |
+          echo "=== CONTENIDO DE socs/exynos9820 ==="
+          ls -la socs/exynos9820
+          echo "=== AYUDA DE defconfig Y kernel ==="
+          grep -A 15 "^defconfig:" Makefile || true
+          grep -A 15 "^kernel:" Makefile || true
+          
       - name: Compilar kernel
         working-directory: scion-kernel
         run: |

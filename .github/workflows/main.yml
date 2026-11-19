@@ -30,7 +30,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential uuid-dev iasl git nasm \
-            python3 python3-pip python3-venv gcc-aarch64-linux-gnu clang lld llvm g++ mono-devel
+            python3 python3-pip python3-venv gcc-aarch64-linux-gnu clang lld llvm g++ \
+            mono-complete ca-certificates-mono nuget
             
       - name: Clonar repositorio UEFI
         run: git clone --recursive "${{ github.event.inputs.uefi_repo }}" uefi-src

@@ -38,28 +38,32 @@ jobs:
           brew install coreutils
           echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
 
-      - name: Ver targets del Makefile y preparar árbol parchado
+      - name: Revisar dispositivos y desempacar árbol parchado
         working-directory: scion-kernel
         run: |
           export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-          echo "=== TARGETS DEL MAKEFILE ==="
-          grep -E '^[a-zA-Z0-9_.-]+:' Makefile || true
-          make setup || make prepare || make help || true
+          make devices || true
+          make unpack
 
-      - name: Compilar kernel con Makefile
+      - name: Compilar kernel
         working-directory: scion-kernel
         run: |
           export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-          make
-          
+          make kernel
+
+      - name: Buscar binarios generados
+        working-directory: scion-kernel
+        run: find . -maxdepth 6 \( -name "kernel*" -o -name "*.img" -o -name "*.macho" \) -type f
+
       - name: Subir binarios del kernel
         uses: actions/upload-artifact@v4
         with:
           name: scion-kernel-build
           path: |
-            scion-kernel/BUILD/**/*kernel*
-            scion-kernel/out/**/*
-            scion-kernel/*.img
+            scion-kernel/**/BUILD/**/kernel*
+            scion-kernel/**/build/**/*.img
+            scion-kernel/**/*.img
+            scion-kernel/**/*.macho
           if-no-files-found: warn
 
  build-uefi:

@@ -38,13 +38,6 @@ jobs:
           brew install coreutils
           echo "$(brew --prefix coreutils)/libexec/gnubin" >> $GITHUB_PATH
 
-      - name: Revisar dispositivos y desempacar árbol parchado
-        working-directory: scion-kernel
-        run: |
-          export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-          make devices || true
-          make unpack
-
       - name: Compilar kernel
         working-directory: scion-kernel
         run: |

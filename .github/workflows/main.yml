@@ -13,7 +13,7 @@ on:
         default: 'https://github.com/Project-Silicium/Mu-Silicium.git'
 
 jobs:
- build-xnu-kernel:
+  build-xnu-kernel:
     runs-on: macos-15
     steps:
       - name: Clonar repositorio del kernel
@@ -48,7 +48,7 @@ jobs:
             scion-kernel/*.img
           if-no-files-found: warn
 
-build-uefi:
+  build-uefi:
     runs-on: ubuntu-24.04
     steps:
       - name: Instalar dependencias de EDK2 / Mu-Silicium
@@ -58,7 +58,7 @@ build-uefi:
             python3 python3-pip python3-venv gcc-aarch64-linux-gnu clang lld llvm g++ \
             mono-complete ca-certificates-mono
           sudo cert-sync /etc/ssl/certs/ca-certificates.crt
-            
+
       - name: Clonar repositorio UEFI
         run: git clone --recursive "${{ github.event.inputs.uefi_repo }}" uefi-src
 

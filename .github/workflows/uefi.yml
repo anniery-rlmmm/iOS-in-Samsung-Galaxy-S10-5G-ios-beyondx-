@@ -10,7 +10,7 @@ jobs:
       - name: Clonar repositorio Mu-Silicium
         uses: actions/checkout@v4
         with:
-          repository: anniery_rlmmm/Mu-Silicium
+          repository: anniery-rlmmm/Mu-Silicium
           submodules: recursive
 
       - name: Instalar dependencias de compilación

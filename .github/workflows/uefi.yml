@@ -21,6 +21,11 @@ jobs:
             gcc-aarch64-linux-gnu clang lld llvm dos2unix device-tree-compiler \
             mono-complete ca-certificates-mono nuget curl unzip
 
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+         python-version: '3.12'
+       
       - name: Compilar UEFI para beyondx
         run: |
           python3 -m venv .venv

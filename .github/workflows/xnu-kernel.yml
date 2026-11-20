@@ -3,58 +3,12 @@ name: Build Scion iOS (beyondx)
 on:
   workflow_dispatch:
     inputs:
-      uefi_repo:
-        description: 'URL de tu fork de Mu-Silicium'
-        required: true
-        default: 'https://github.com/anniery-rlmmm/Mu-Silicium.git'
       kernel_repo:
         description: 'URL del repositorio del kernel Scion'
         required: true
         default: 'https://github.com/anniery-rlmmm/scion-kernel.git'
 
 jobs:
-  build-uefi:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Instalar dependencias de EDK2 y Mu-Silicium
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            build-essential uuid-dev iasl git nasm python3-setuptools \
-            python3-pip python3-venv gcc-aarch64-linux-gnu llvm clang lld \
-            mono-complete ca-certificates-mono
-          sudo cert-sync /etc/ssl/certs/ca-certificates.crt || true
-
-      - name: Clonar fork de Mu-Silicium
-        run: git clone --recursive "${{ github.event.inputs.uefi_repo }}" uefi-src
-
-      - name: Instalar dependencias de Python
-        working-directory: uefi-src
-        run: pip3 install --break-system-packages -r pip-requirements.txt || true
-
-      - name: Inspeccionar archivos de beyondxPkg
-        working-directory: uefi-src
-        run: find Platforms/Samsung/beyondxPkg -maxdepth 3
-
-      - name: Usar DTB de beyond1lte para beyondx
-        working-directory: uefi-src
-        run: |
-          ls -la Resources/DTBs/
-          cp -f Resources/DTBs/beyond1lte.dtb Resources/DTBs/beyondx.dtb
-          
-      - name: Compilar imagen UEFI (beyondx)
-        working-directory: uefi-src
-        run: python3 build_uefi.py -d beyondx
-
-      - name: Subir imagen UEFI compilada
-        uses: actions/upload-artifact@v4
-        with:
-          name: uefi-beyondx
-          path: |
-            uefi-src/Build/**/*.img
-            uefi-src/Mu-*.img
-          if-no-files-found: warn
-
   build-xnu-kernel:
     runs-on: macos-15-intel
     steps:

@@ -10,7 +10,7 @@ on:
       kernel_repo:
         description: 'URL del repositorio del kernel Scion'
         required: true
-        default: 'https://github.com/Scion-Project/scion-kernel.git'
+        default: 'https://github.com/anniery-rlmmm/scion-kernel.git'
 
 jobs:
   build-uefi:
